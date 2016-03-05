@@ -3,6 +3,8 @@ package bgb.geogoal;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import java.util.Random;
+
 
 public class Player extends GameObject{
 
@@ -17,7 +19,19 @@ public class Player extends GameObject{
     public Player(Bitmap res, int w, int h, int numFrames) {
 
         x = 100;
-        y = GamePanel.HEIGHT / 2 - h / 2;
+        Random rand = new Random();
+        switch (rand.nextInt(3))
+        {
+            case 0: y = GamePanel.HEIGHT / 2 - h / 2;
+                break;
+            case 1: y = GamePanel.HEIGHT / 3 - h / 2;
+                break;
+            case 2: y = (2*(GamePanel.HEIGHT / 3)) - h / 2;
+                break;
+            default: break;
+        }
+
+        //y = GamePanel.HEIGHT / 2 - h / 2;
         dy = 0;
         score = 0;
         height = h;
@@ -46,7 +60,7 @@ public class Player extends GameObject{
 
     public void draw(Canvas canvas)
     {
-        canvas.drawBitmap(animation.getImage(),x,y,null);
+        canvas.drawBitmap(animation.getImage(), x, y, null);
     }
 
     public int getScore(){return score;}
