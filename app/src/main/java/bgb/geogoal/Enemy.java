@@ -15,8 +15,8 @@ public class Enemy extends GameObject{
 
     public Enemy(Bitmap res, int w, int h, int numFrames) {
 
-        x = GamePanel.WIDTH - 100;
-        y = GamePanel.HEIGHT / 2;
+        x = GamePanel.WIDTH - 200;
+        y = GamePanel.HEIGHT / 2 - h / 2;
         dy = 0;
         score = 0;
         height = h;
@@ -41,19 +41,6 @@ public class Enemy extends GameObject{
     {
         animation.update();
 
-/*        if(up){
-            dy = (int)(dya-=1.1);
-
-        }
-        else{
-            dy = (int)(dya+=1.1);
-        }
-
-        if(dy>14)dy = 14;
-        if(dy<-14)dy = -14;
-
-        y += dy*2;
-        dy = 0;*/
     }
 
     public void draw(Canvas canvas)
