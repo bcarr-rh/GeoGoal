@@ -4,21 +4,20 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
 
-public class Enemy extends GameObject{
+public class Ball extends GameObject{
     private Bitmap spritesheet;
-    private int score;
     private double dya;
     private double dxa;
-    private boolean up;
+    private double speed;
     private boolean playing;
     private Animation animation = new Animation();
 
-    public Enemy(Bitmap res, int w, int h, int numFrames) {
+    public Ball(Bitmap res, int w, int h, int numFrames) {
 
-        x = GamePanel.WIDTH - 200;
-        y = GamePanel.HEIGHT / 2 - h / 2;
+        x = (GamePanel.WIDTH / 2) - (w / 2);
+        y = (GamePanel.HEIGHT / 2) - (h / 2);
         dy = 0;
-        score = 0;
+        dx = 0;
         height = h;
         width = w;
 
@@ -31,25 +30,32 @@ public class Enemy extends GameObject{
         }
 
         animation.setFrames(image);
-        animation.setDelay(10);
+        animation.setDelay(500);
 
     }
-
-    public void setUp(boolean b){up = b;}
 
     public void update()
     {
         animation.update();
 
+        //ball needs to move based on collision physics
+
+        //hitDetection()
+
+    }
+
+    public void hitDetection(int sourceSpeed, int sourceX, int sourceY)
+    {
+        //this method will receive the parameters from the player's x and y coordinate
     }
 
     public void draw(Canvas canvas)
     {
-        canvas.drawBitmap(animation.getImage(),x,y,null);
+        canvas.drawBitmap(animation.getImage(), x, y, null);
     }
-    public int getScore(){return score;}
+
     public boolean getPlaying(){return playing;}
     public void setPlaying(boolean b){playing = b;}
     public void resetDYA(){dya = 0;}
-    public void resetScore(){score = 0;}
+    public void resetDXA(){dxa = 0;}
 }
