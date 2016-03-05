@@ -20,7 +20,7 @@ public class Background {
     }
     public void draw(Canvas canvas)
     {
-        canvas.drawBitmap(image, -135, 0, null);
+        canvas.drawBitmap(image, 0, 0, null);
 
     }
     public void setVector(int dx)
