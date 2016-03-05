@@ -2,6 +2,10 @@ package bgb.geogoal;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.view.animation.RotateAnimation;
+import android.view.animation.Transformation;
 
 import java.util.Random;
 
@@ -14,10 +18,12 @@ public class Player extends GameObject{
     private double dxa;
     private boolean up;
     private boolean playing;
+    private float degrees;
+    private static final double DEGREE_TO_RADIAN = Math.PI/180;
+    private static final double RADIAN_TO_DEGREE = 180/Math.PI;
     private Animation animation = new Animation();
-
     public Player(Bitmap res, int w, int h, int numFrames) {
-
+        degrees = 0;
         x = 100;
         Random rand = new Random();
         switch (rand.nextInt(3))
@@ -31,8 +37,9 @@ public class Player extends GameObject{
             default: break;
         }
 
-        //y = GamePanel.HEIGHT / 2 - h / 2;
+        //y = GameP anel.HEIGHT / 2 - h / 2;
         dy = 0;
+        dx = 1;
         score = 0;
         height = h;
         width = w;
@@ -52,15 +59,38 @@ public class Player extends GameObject{
 
     public void setUp(boolean b){up = b;}
 
-    public void update()
+    public void update(Point movePoint)
     {
-        animation.update();
 
+
+        double velocityConstant = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
+        double unitX = movePoint.x*velocityConstant;
+        double unitY = movePoint.y*velocityConstant;
+        double radianBetween = Math.acos(unitX*dx +unitY*dy);
+        degrees = (float) Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
+        /*
+        if (radianBetween == 0)
+            return;
+        Matrix matrix = new Matrix();
+        if (Math.toDegrees(Math.abs(radianBetween))>1) {
+            matrix.postRotate((float) (radianBetween / Math.abs(radianBetween)));
+            degrees = (float)(degrees + radianBetween/ Math.abs(radianBetween))%360;
+        }
+        else {
+            matrix.postRotate((float) radianBetween);
+            degrees = (float)(degrees + Math.toDegrees(radianBetween))%360;
+        }
+        */
+        animation.update();
     }
 
     public void draw(Canvas canvas)
     {
-        canvas.drawBitmap(animation.getImage(), x, y, null);
+        canvas.save();
+        canvas.rotate(degrees, x + (this.width / 2), y + (this.height / 2)); //rotate the canvas' matrix
+        canvas.drawBitmap(animation.getImage(), x, y, null); //draw the ball on the "rotated" canvas
+        canvas.restore(); //rotate the canvas' matrix back
+
     }
 
     public int getScore(){return score;}

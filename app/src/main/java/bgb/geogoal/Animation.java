@@ -17,6 +17,9 @@ public class Animation {
     }
     public void setDelay(long d){delay = d;}
     public void setFrame(int i){currentFrame= i;}
+    public Bitmap[] getBitmap() {
+        return frames;
+    }
 
     public void update()
     {

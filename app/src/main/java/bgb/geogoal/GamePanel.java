@@ -75,7 +75,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         uiBoost.TouchEvent(event);
-        uiJoystick.TouchEvent(event);
+        player.update(uiJoystick.TouchEvent(event));
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!player.getPlaying()) {
@@ -95,7 +95,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void update() {
         if (player.getPlaying()) {
             bg.update();
-            player.update();
             enemy.update();
             ball.update();
         }
