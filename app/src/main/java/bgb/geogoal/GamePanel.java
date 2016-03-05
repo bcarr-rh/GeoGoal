@@ -18,7 +18,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Background bg;
     private Player player;
     private Enemy enemy;
-    private UIDrawingView ui;
+    private UIDrawingViewJoystick uiJoystick;
+    private UIDrawingViewBoostButton uiBoost;
     private Ball ball;
 
     public GamePanel(Context context) {
@@ -32,7 +33,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         //make gamePanel focusable so it can handle events
         setFocusable(true);
-        ui = new UIDrawingView(context);
+        uiJoystick = new UIDrawingViewJoystick(context);
+        uiBoost = new UIDrawingViewBoostButton(context);
     }
 
     @Override
@@ -72,7 +74,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        ui.TouchEvent(event);
+        uiJoystick.TouchEvent(event);
+        uiBoost.TouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!player.getPlaying()) {
                 player.setPlaying(true);
@@ -112,7 +115,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             enemy.draw(canvas);
             ball.draw(canvas);
             canvas.restoreToCount(savedState);
-            ui.draw(canvas);
+            uiJoystick.draw(canvas);
+            uiBoost.draw(canvas);
         }
     }
 
