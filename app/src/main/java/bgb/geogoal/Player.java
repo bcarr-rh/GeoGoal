@@ -64,23 +64,16 @@ public class Player extends GameObject{
 
 
         double velocityConstant = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
-        double unitX = movePoint.x*velocityConstant;
-        double unitY = movePoint.y*velocityConstant;
-        double radianBetween = Math.acos(unitX*dx +unitY*dy);
-        degrees = (float) Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
-        /*
-        if (radianBetween == 0)
-            return;
-        Matrix matrix = new Matrix();
-        if (Math.toDegrees(Math.abs(radianBetween))>1) {
-            matrix.postRotate((float) (radianBetween / Math.abs(radianBetween)));
-            degrees = (float)(degrees + radianBetween/ Math.abs(radianBetween))%360;
+        double unitX = movePoint.x/Math.max(1,velocityConstant);
+        double unitY = movePoint.y/Math.max(1,velocityConstant);
+        double angleMovePoint = Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
+
+        if (angleMovePoint > degrees && angleMovePoint - 180 < degrees) {
+            degrees++;
         }
         else {
-            matrix.postRotate((float) radianBetween);
-            degrees = (float)(degrees + Math.toDegrees(radianBetween))%360;
+            degrees--;
         }
-        */
         animation.update();
     }
 
