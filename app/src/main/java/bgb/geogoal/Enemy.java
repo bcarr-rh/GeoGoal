@@ -3,6 +3,8 @@ package bgb.geogoal;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
+import java.util.Random;
+
 
 public class Enemy extends GameObject{
     private Bitmap spritesheet;
@@ -16,7 +18,17 @@ public class Enemy extends GameObject{
     public Enemy(Bitmap res, int w, int h, int numFrames) {
 
         x = GamePanel.WIDTH - 200;
-        y = GamePanel.HEIGHT / 2 - h / 2;
+        Random rand = new Random();
+        switch (rand.nextInt(3))
+        {
+            case 0: y = GamePanel.HEIGHT / 2 - h / 2;
+                break;
+            case 1: y = GamePanel.HEIGHT / 3 - h / 2;
+                break;
+            case 2: y = (2*(GamePanel.HEIGHT / 3)) - h / 2;
+                break;
+            default: break;
+        }
         dy = 0;
         score = 0;
         height = h;
