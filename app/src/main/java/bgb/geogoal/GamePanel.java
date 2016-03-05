@@ -19,6 +19,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Background bg;
     private Player player;
     private Enemy enemy;
+    private Ball ball;
 
     public GamePanel(Context context)
     {
@@ -54,6 +55,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(SurfaceHolder holder){
 
+
+        ball = new Ball(BitmapFactory.decodeResource(getResources(), R.drawable.ball), 95, 95, 2);
+
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.field));
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 130, 80, 1);
         enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.enemy), 125, 80, 1);
@@ -65,7 +69,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
-
         if(event.getAction()==MotionEvent.ACTION_DOWN){
             if(!player.getPlaying())
             {
@@ -92,6 +95,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             bg.update();
             player.update();
             enemy.update();
+            ball.update();
         }
     }
     @Override
@@ -106,6 +110,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             bg.draw(canvas);
             player.draw(canvas);
             enemy.draw(canvas);
+            ball.draw(canvas);
             canvas.restoreToCount(savedState);
         }
     }
