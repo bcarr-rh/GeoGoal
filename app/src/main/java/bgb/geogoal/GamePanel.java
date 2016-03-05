@@ -68,6 +68,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        ui.TouchEvent(event);
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!player.getPlaying()) {
                 player.setPlaying(true);
@@ -80,7 +81,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             player.setUp(false);
             return true;
         }
-        ui.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
