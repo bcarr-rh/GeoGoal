@@ -19,18 +19,8 @@ public class Player extends GameObject{
     public Player(Bitmap res, int w, int h, int numFrames) {
 
         x = 100;
-        Random rand = new Random();
-        switch (rand.nextInt(3))
-        {
-            case 0: y = GamePanel.HEIGHT / 2 - h / 2;
-                break;
-            case 1: y = GamePanel.HEIGHT / 3 - h / 2;
-                break;
-            case 2: y = (2*(GamePanel.HEIGHT / 3)) - h / 2;
-                break;
-            default: break;
-        }
 
+        spawn(h);
         //y = GamePanel.HEIGHT / 2 - h / 2;
         dy = 0;
         score = 0;
@@ -42,7 +32,7 @@ public class Player extends GameObject{
 
         for (int i = 0; i < image.length; i++)
         {
-            image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
+            image[i] = Bitmap.createBitmap(spritesheet, i * width, 0, width, height);
         }
 
         animation.setFrames(image);
@@ -58,9 +48,12 @@ public class Player extends GameObject{
 
     }
 
+    int test = 0;
+
     public void draw(Canvas canvas)
     {
-        canvas.drawBitmap(animation.getImage(), x, y, null);
+        //canvas.drawBitmap(animation.getImage(), x, y, null);
+
     }
 
     public int getScore(){return score;}
@@ -68,4 +61,19 @@ public class Player extends GameObject{
     public void setPlaying(boolean b){playing = b;}
     public void resetDYA(){dya = 0;}
     public void resetScore(){score = 0;}
+
+    private void spawn(int h)
+    {
+        Random rand = new Random();
+        switch (rand.nextInt(3))
+        {
+            case 0: y = GamePanel.HEIGHT / 2 - h / 2;
+                break;
+            case 1: y = GamePanel.HEIGHT / 3 - h / 2;
+                break;
+            case 2: y = (2*(GamePanel.HEIGHT / 3)) - h / 2;
+                break;
+            default: break;
+        }
+    }
 }
