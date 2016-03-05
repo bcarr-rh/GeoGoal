@@ -10,8 +10,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 
-public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
-{
+public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public static final int WIDTH = 1920;
     public static final int HEIGHT = 1080;
     public static final int MOVESPEED = -5;
@@ -19,10 +18,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
     private Background bg;
     private Player player;
     private Enemy enemy;
+    private UIDrawingViewJoystick uiJoystick;
+    private UIDrawingViewBoostButton uiBoost;
     private Ball ball;
 
-    public GamePanel(Context context)
-    {
+    public GamePanel(Context context) {
         super(context);
 
 
@@ -33,27 +33,32 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
 
         //make gamePanel focusable so it can handle events
         setFocusable(true);
+        uiJoystick = new UIDrawingViewJoystick(context);
+        uiBoost = new UIDrawingViewBoostButton(context);
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){}
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder){
+    public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
-        while(retry)
-        {
-            try{thread.setRunning(false);
+        while (retry) {
+            try {
+                thread.setRunning(false);
                 thread.join();
 
-            }catch(InterruptedException e){e.printStackTrace();}
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             retry = false;
         }
 
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder){
+    public void surfaceCreated(SurfaceHolder holder) {
 
 
         ball = new Ball(BitmapFactory.decodeResource(getResources(), R.drawable.ball), 95, 95, 2);
@@ -66,41 +71,39 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
         thread.start();
 
     }
+
     @Override
-    public boolean onTouchEvent(MotionEvent event)
-    {
-        if(event.getAction()==MotionEvent.ACTION_DOWN){
-            if(!player.getPlaying())
-            {
+    public boolean onTouchEvent(MotionEvent event) {
+        uiBoost.TouchEvent(event);
+        player.update(uiJoystick.TouchEvent(event));
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (!player.getPlaying()) {
                 player.setPlaying(true);
-            }
-            else
-            {
+            } else {
                 player.setUp(true);
             }
             return true;
         }
-        if(event.getAction()==MotionEvent.ACTION_UP)
-        {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
             player.setUp(false);
             return true;
         }
-
         return super.onTouchEvent(event);
     }
 
-    public void update()
-    {
-        if(player.getPlaying()) {
+    public void update() {
+        if (player.getPlaying()) {
             bg.update();
-            player.update();
             enemy.update();
             ball.update();
         }
     }
+
     @Override
     public void draw(Canvas canvas)
     {
+        super.draw(canvas);
         final float scaleFactorX = getWidth()/(WIDTH*1.f);
         final float scaleFactorY = getHeight()/(HEIGHT*1.f);
 
@@ -112,6 +115,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback
             enemy.draw(canvas);
             ball.draw(canvas);
             canvas.restoreToCount(savedState);
+            uiJoystick.draw(canvas);
+            uiBoost.draw(canvas);
         }
     }
 

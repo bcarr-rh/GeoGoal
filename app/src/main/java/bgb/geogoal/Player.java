@@ -2,6 +2,10 @@ package bgb.geogoal;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Point;
+import android.view.animation.RotateAnimation;
+import android.view.animation.Transformation;
 
 import java.util.Random;
 
@@ -14,56 +18,13 @@ public class Player extends GameObject{
     private double dxa;
     private boolean up;
     private boolean playing;
+    private float degrees;
+    private static final double DEGREE_TO_RADIAN = Math.PI/180;
+    private static final double RADIAN_TO_DEGREE = 180/Math.PI;
     private Animation animation = new Animation();
-
     public Player(Bitmap res, int w, int h, int numFrames) {
-
+        degrees = 0;
         x = 100;
-
-        spawn(h);
-        //y = GamePanel.HEIGHT / 2 - h / 2;
-        dy = 0;
-        score = 0;
-        height = h;
-        width = w;
-
-        Bitmap[] image = new Bitmap[numFrames];
-        spritesheet = res;
-
-        for (int i = 0; i < image.length; i++)
-        {
-            image[i] = Bitmap.createBitmap(spritesheet, i * width, 0, width, height);
-        }
-
-        animation.setFrames(image);
-        animation.setDelay(10);
-
-    }
-
-    public void setUp(boolean b){up = b;}
-
-    public void update()
-    {
-        animation.update();
-
-    }
-
-    int test = 0;
-
-    public void draw(Canvas canvas)
-    {
-        //canvas.drawBitmap(animation.getImage(), x, y, null);
-
-    }
-
-    public int getScore(){return score;}
-    public boolean getPlaying(){return playing;}
-    public void setPlaying(boolean b){playing = b;}
-    public void resetDYA(){dya = 0;}
-    public void resetScore(){score = 0;}
-
-    private void spawn(int h)
-    {
         Random rand = new Random();
         switch (rand.nextInt(3))
         {
@@ -75,5 +36,66 @@ public class Player extends GameObject{
                 break;
             default: break;
         }
+
+        //y = GameP anel.HEIGHT / 2 - h / 2;
+        dy = 0;
+        dx = 1;
+        score = 0;
+        height = h;
+        width = w;
+
+        Bitmap[] image = new Bitmap[numFrames];
+        spritesheet = res;
+
+        for (int i = 0; i < image.length; i++)
+        {
+            image[i] = Bitmap.createBitmap(spritesheet, i*width, 0, width, height);
+        }
+
+        animation.setFrames(image);
+        animation.setDelay(10);
+
     }
+
+    public void setUp(boolean b){up = b;}
+
+    public void update(Point movePoint)
+    {
+
+
+        double velocityConstant = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
+        double unitX = movePoint.x*velocityConstant;
+        double unitY = movePoint.y*velocityConstant;
+        double radianBetween = Math.acos(unitX*dx +unitY*dy);
+        degrees = (float) Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
+        /*
+        if (radianBetween == 0)
+            return;
+        Matrix matrix = new Matrix();
+        if (Math.toDegrees(Math.abs(radianBetween))>1) {
+            matrix.postRotate((float) (radianBetween / Math.abs(radianBetween)));
+            degrees = (float)(degrees + radianBetween/ Math.abs(radianBetween))%360;
+        }
+        else {
+            matrix.postRotate((float) radianBetween);
+            degrees = (float)(degrees + Math.toDegrees(radianBetween))%360;
+        }
+        */
+        animation.update();
+    }
+
+    public void draw(Canvas canvas)
+    {
+        canvas.save();
+        canvas.rotate(degrees, x + (this.width / 2), y + (this.height / 2)); //rotate the canvas' matrix
+        canvas.drawBitmap(animation.getImage(), x, y, null); //draw the ball on the "rotated" canvas
+        canvas.restore(); //rotate the canvas' matrix back
+
+    }
+
+    public int getScore(){return score;}
+    public boolean getPlaying(){return playing;}
+    public void setPlaying(boolean b){playing = b;}
+    public void resetDYA(){dya = 0;}
+    public void resetScore(){score = 0;}
 }
