@@ -25,17 +25,7 @@ public class Player extends GameObject{
     public Player(Bitmap res, int w, int h, int numFrames) {
         degrees = 0;
         x = 100;
-        Random rand = new Random();
-        switch (rand.nextInt(3))
-        {
-            case 0: y = GamePanel.HEIGHT / 2 - h / 2;
-                break;
-            case 1: y = GamePanel.HEIGHT / 3 - h / 2;
-                break;
-            case 2: y = (2*(GamePanel.HEIGHT / 3)) - h / 2;
-                break;
-            default: break;
-        }
+        setY(h);
 
         //y = GameP anel.HEIGHT / 2 - h / 2;
         dy = 0;
@@ -63,6 +53,17 @@ public class Player extends GameObject{
     {
 
 
+        double velocityConstant = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
+        double unitX = movePoint.x/Math.max(1,velocityConstant);
+        double unitY = movePoint.y/Math.max(1,velocityConstant);
+        double angleMovePoint = Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
+
+        if (angleMovePoint > degrees && angleMovePoint - 180 < degrees) {
+            degrees++;
+        }
+        else {
+            degrees--;
+        }
         animation.update();
     }
 
@@ -75,9 +76,25 @@ public class Player extends GameObject{
 
     }
 
+    public void setY(int h)
+    {
+        Random rand = new Random();
+        switch (rand.nextInt(3))
+        {
+            case 0: y = GamePanel.HEIGHT / 2 - h / 2;
+                break;
+            case 1: y = GamePanel.HEIGHT / 3 - h / 2;
+                break;
+            case 2: y = (2*(GamePanel.HEIGHT / 3)) - h / 2;
+                break;
+            default: break;
+        }
+    }
+
     public int getScore(){return score;}
     public boolean getPlaying(){return playing;}
     public void setPlaying(boolean b){playing = b;}
     public void resetDYA(){dya = 0;}
     public void resetScore(){score = 0;}
+    public void increaseScore() {score++;}
 }

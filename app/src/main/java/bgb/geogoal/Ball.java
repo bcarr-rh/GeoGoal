@@ -14,8 +14,7 @@ public class Ball extends GameObject{
 
     public Ball(Bitmap res, int w, int h, int numFrames) {
 
-        x = (GamePanel.WIDTH / 2) - (w / 2);
-        y = (GamePanel.HEIGHT / 2) - (h / 2);
+        resetPosition(w, h);
         dy = 0;
         dx = 0;
         height = h;
@@ -41,6 +40,8 @@ public class Ball extends GameObject{
         //ball needs to move based on collision physics
 
         //hitDetection()
+        x += 20;
+
 
     }
 
@@ -52,6 +53,12 @@ public class Ball extends GameObject{
     public void draw(Canvas canvas)
     {
         canvas.drawBitmap(animation.getImage(), x, y, null);
+    }
+
+    public void resetPosition(int w, int h)
+    {
+        x = (GamePanel.WIDTH / 2) - (w / 2);
+        y = (GamePanel.HEIGHT / 2) - (h / 2);
     }
 
     public boolean getPlaying(){return playing;}
