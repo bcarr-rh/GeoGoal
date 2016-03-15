@@ -51,19 +51,11 @@ public class Player extends GameObject{
 
     public void update(Point movePoint)
     {
+        degrees = (float)Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
+        double velocity = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
+        this.x += movePoint.x * .1;
+        this.y += movePoint.y * .1;
 
-
-        double velocityConstant = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
-        double unitX = movePoint.x/Math.max(1,velocityConstant);
-        double unitY = movePoint.y/Math.max(1,velocityConstant);
-        double angleMovePoint = Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
-
-        if (angleMovePoint > degrees && angleMovePoint - 180 < degrees) {
-            degrees++;
-        }
-        else {
-            degrees--;
-        }
         animation.update();
     }
 

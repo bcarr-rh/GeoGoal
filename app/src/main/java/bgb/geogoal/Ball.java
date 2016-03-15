@@ -40,7 +40,7 @@ public class Ball extends GameObject{
         //ball needs to move based on collision physics
 
         //hitDetection()
-        x += 20;
+        //x += 20;
 
 
     }
