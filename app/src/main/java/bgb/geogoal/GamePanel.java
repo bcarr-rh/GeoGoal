@@ -1,7 +1,6 @@
 package bgb.geogoal;
 
 
-
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -12,7 +11,6 @@ import android.graphics.Rect;
 import android.graphics.Paint;
 import android.graphics.Color;
 import android.graphics.Typeface;
-
 
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
@@ -26,6 +24,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private UIDrawingViewJoystick uiJoystick;
     private UIDrawingViewBoostButton uiBoost;
     private Ball ball;
+    private TopBorder tBorder;
+    private BottomBorder bBorder;
+    private TLBorder tlBorder;
+    private TRBorder trBorder;
+    private BLBorder blBorder;
+    private BRBorder brBorder;
     private boolean reset;
     private boolean newGameCreated;
     private boolean started;
@@ -74,6 +78,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.field));
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 130, 80, 1);
         enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.enemy), 125, 80, 1);
+        tBorder = new TopBorder(BitmapFactory.decodeResource(getResources(), R.drawable.top));
+        bBorder = new BottomBorder(BitmapFactory.decodeResource(getResources(), R.drawable.bot));
+        tlBorder = new TLBorder(BitmapFactory.decodeResource(getResources(), R.drawable.topleft));
+        trBorder = new TRBorder(BitmapFactory.decodeResource(getResources(), R.drawable.topright));
+        blBorder = new BLBorder(BitmapFactory.decodeResource(getResources(), R.drawable.botleft));
+        brBorder = new BRBorder(BitmapFactory.decodeResource(getResources(), R.drawable.botright));
         //we can safely start the game loop
         thread.setRunning(true);
         thread.start();
@@ -90,9 +100,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 player.setPlaying(true);
                 player.setUp(true);
             }
-            if(player.getPlaying())
-            {
-                if(!started)started = true;
+            if (player.getPlaying()) {
+                if (!started) started = true;
                 reset = false;
                 player.setUp(true);
             }
@@ -110,22 +119,26 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             bg.update();
             enemy.update();
             ball.update();
-            if(goal(ball))
-            {
+            if (goal(ball)) {
                 player.setPlaying(false);
             }
-        }else{
+            if (collision(ball, tBorder) || collision(ball, bBorder)) {
+                ball.changeDY();
+            }
+            if (collision(ball, trBorder) || collision(ball, tlBorder) ||
+                    collision(ball, brBorder) || collision(ball, blBorder)) {
+                ball.changeDX();
+            }
+        } else {
             player.resetDYA();
             enemy.resetDYA();
             ball.resetPosition(95, 95);
-            if(!reset)
-            {
+            if (!reset) {
                 newGameCreated = false;
                 reset = true;
             }
 
-            if(!newGameCreated)
-            {
+            if (!newGameCreated) {
                 newGame();
             }
 
@@ -134,18 +147,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public boolean goal(GameObject a) {
-        if (a.getRectangle().exactCenterX() < 125)
-        {
-            if (a.getRectangle().exactCenterY() > 444 && a.getRectangle().exactCenterY() < 636)
-            {
+        if (a.getRectangle().exactCenterX() < 125) {
+            if (a.getRectangle().exactCenterY() > 444 && a.getRectangle().exactCenterY() < 636) {
                 enemy.increaseScore();
                 return true;
             }
         }
-        if (a.getRectangle().exactCenterX() > 1795)
-        {
-            if (a.getRectangle().exactCenterY() > 444 && a.getRectangle().exactCenterY() < 636)
-            {
+        if (a.getRectangle().exactCenterX() > 1795) {
+            if (a.getRectangle().exactCenterY() > 444 && a.getRectangle().exactCenterY() < 636) {
                 player.increaseScore();
                 return true;
             }
@@ -154,16 +163,21 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void draw(Canvas canvas)
-    {
+    public void draw(Canvas canvas) {
         super.draw(canvas);
-        final float scaleFactorX = getWidth()/(WIDTH*1.f);
-        final float scaleFactorY = getHeight()/(HEIGHT*1.f);
+        final float scaleFactorX = getWidth() / (WIDTH * 1.f);
+        final float scaleFactorY = getHeight() / (HEIGHT * 1.f);
 
-        if(canvas!=null) {
+        if (canvas != null) {
             final int savedState = canvas.save();
             canvas.scale(scaleFactorX, scaleFactorY);
             bg.draw(canvas);
+            tBorder.draw(canvas);
+            bBorder.draw(canvas);
+            tlBorder.draw(canvas);
+            trBorder.draw(canvas);
+            blBorder.draw(canvas);
+            brBorder.draw(canvas);
             player.draw(canvas);
             enemy.draw(canvas);
             ball.draw(canvas);
@@ -174,8 +188,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void newGame()
-    {
+    public void newGame() {
         player.resetDYA();
         player.setY(80);
         enemy.resetDYA();
@@ -183,8 +196,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         newGameCreated = true;
     }
 
-    public void drawText(Canvas canvas)
-    {
+    public void drawText(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);
         paint.setTextSize(30);
@@ -192,17 +204,23 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         canvas.drawText("Player Score: " + player.getScore(), 10, HEIGHT - 10, paint);
         canvas.drawText("Enemy Score: " + enemy.getScore(), WIDTH - 415, HEIGHT - 10, paint);
 
-        if(!player.getPlaying()&&newGameCreated&&reset)
-        {
+        if (!player.getPlaying() && newGameCreated && reset) {
             Paint paint1 = new Paint();
             paint1.setTextSize(40);
             paint1.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            canvas.drawText("PRESS TO START", WIDTH/2-50, HEIGHT/2, paint1);
+            canvas.drawText("PRESS TO START", WIDTH / 2 - 50, HEIGHT / 2, paint1);
 
             paint1.setTextSize(20);
-            canvas.drawText("USE THE LEFT CIRCLE FOR MOVEMENT", WIDTH/2-50, HEIGHT/2 + 20, paint1);
-            canvas.drawText("RIGHT CIRCLE FOR BOOST", WIDTH/2-50, HEIGHT/2 + 40, paint1);
+            canvas.drawText("USE THE LEFT CIRCLE FOR MOVEMENT", WIDTH / 2 - 50, HEIGHT / 2 + 20, paint1);
+            canvas.drawText("RIGHT CIRCLE FOR BOOST", WIDTH / 2 - 50, HEIGHT / 2 + 40, paint1);
         }
+    }
+
+    public boolean collision(GameObject a, GameObject b) {
+        if (Rect.intersects(a.getRectangle(), b.getRectangle())) {
+            return true;
+        }
+        return false;
     }
 
 

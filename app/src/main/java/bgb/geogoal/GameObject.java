@@ -10,33 +10,30 @@ public abstract class GameObject {
     protected int width;
     protected int height;
 
-    public void setX(int x)
-    {
+    public void setX(int x) {
         this.x = x;
     }
-    public void setY(int y)
-    {
+
+    public void setY(int y) {
         this.y = y;
     }
-    public int getX()
-    {
-        return x;
-    }
-    public int getY()
-    {
+
+    public int getX() { return x; }
+
+    public int getY() {
         return y;
     }
-    public int getHeight()
-    {
+
+    public int getHeight() {
         return height;
     }
-    public int getWidth()
-    {
+
+    public int getWidth() {
         return width;
     }
-    public Rect getRectangle()
-    {
-        return new Rect(x, y, x+width, y+height);
+
+    public Rect getRectangle() {
+        return new Rect(x, y, x + width, y + height);
     }
 
 }
