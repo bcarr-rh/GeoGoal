@@ -3,26 +3,19 @@ package bgb.geogoal;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-public class Background {
-
+public class TLBorder extends GameObject {
     private Bitmap image;
-    private int x, y, dx;
 
-    public Background(Bitmap res) {
+    public TLBorder(Bitmap res) {
         image = res;
-
-    }
-
-    public void update() {
-
+        this.x = 0;
+        this.y = 0;
+        this.height = res.getHeight();
+        this.width = res.getWidth();
     }
 
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, 0, 0, null);
-
     }
 
-    public void setVector(int dx) {
-        this.dx = dx;
-    }
 }
