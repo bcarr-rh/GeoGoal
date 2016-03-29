@@ -147,14 +147,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public boolean goal(GameObject a) {
-        if (a.getRectangle().exactCenterX() < 125) {
-            if (a.getRectangle().exactCenterY() > 444 && a.getRectangle().exactCenterY() < 636) {
+        if (a.getRectangle().exactCenterX() < 140) {
+            if (a.getRectangle().exactCenterY() > 440 && a.getRectangle().exactCenterY() < 640) {
                 enemy.increaseScore();
                 return true;
             }
         }
-        if (a.getRectangle().exactCenterX() > 1795) {
-            if (a.getRectangle().exactCenterY() > 444 && a.getRectangle().exactCenterY() < 636) {
+        if (a.getRectangle().exactCenterX() > 1780) {
+            if (a.getRectangle().exactCenterY() > 440 && a.getRectangle().exactCenterY() < 640) {
                 player.increaseScore();
                 return true;
             }
