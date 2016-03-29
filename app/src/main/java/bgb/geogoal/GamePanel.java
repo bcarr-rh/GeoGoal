@@ -24,15 +24,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private UIDrawingViewJoystick uiJoystick;
     private UIDrawingViewBoostButton uiBoost;
     private Ball ball;
-    private TopBorder tBorder;
-    private BottomBorder bBorder;
-    private TLBorder tlBorder;
-    private TRBorder trBorder;
-    private BLBorder blBorder;
-    private BRBorder brBorder;
+
+    private Border tlBorder;
+    private Border trBorder;
+    private Border brBorder;
+    private Border blBorder;
+    private Border tBorder;
+    private Border bBorder;
+
     private boolean reset;
     private boolean newGameCreated;
     private boolean started;
+    private boolean pointScored = false;
+
 
     public GamePanel(Context context) {
         super(context);
@@ -78,12 +82,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.field));
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 130, 80, 1);
         enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.enemy), 125, 80, 1);
-        tBorder = new TopBorder(BitmapFactory.decodeResource(getResources(), R.drawable.top));
-        bBorder = new BottomBorder(BitmapFactory.decodeResource(getResources(), R.drawable.bot));
-        tlBorder = new TLBorder(BitmapFactory.decodeResource(getResources(), R.drawable.topleft));
-        trBorder = new TRBorder(BitmapFactory.decodeResource(getResources(), R.drawable.topright));
-        blBorder = new BLBorder(BitmapFactory.decodeResource(getResources(), R.drawable.botleft));
-        brBorder = new BRBorder(BitmapFactory.decodeResource(getResources(), R.drawable.botright));
+
+        tlBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.topleft), 0, 0);
+        trBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.topright), 1744, 0);
+        blBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.botleft), 0, 629);
+        brBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.botright), 1744, 629);
+        tBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.top), 0, 0);
+        bBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.bot), 0, 1043);
+
+
+
         //we can safely start the game loop
         thread.setRunning(true);
         thread.start();
@@ -92,8 +100,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        uiBoost.TouchEvent(event);
-        player.update(uiJoystick.TouchEvent(event));
+        if (uiBoost.TouchEvent(event)) {
+            player.update(uiJoystick.TouchEvent(event), 10);
+        }
+        else
+            player.update(uiJoystick.TouchEvent(event), 0);
+
+
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!player.getPlaying() && newGameCreated && reset) {
@@ -116,25 +129,24 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     public void update() {
         if (player.getPlaying()) {
-            bg.update();
+
+            //bg.update();
             enemy.update();
             ball.update();
+
             if (goal(ball)) {
                 player.setPlaying(false);
             }
-            if (collision(ball, tBorder) || collision(ball, bBorder)) {
-                ball.changeDY();
-            }
-            if (collision(ball, trBorder) || collision(ball, tlBorder) ||
-                    collision(ball, brBorder) || collision(ball, blBorder)) {
-                ball.changeDX();
-            }
-        } else {
-            player.resetDYA();
-            enemy.resetDYA();
-            ball.resetPosition(95, 95);
+
+            checkCollisions();
+
+        }
+
+        else {
+
             if (!reset) {
                 newGameCreated = false;
+                resetAfterPoint();
                 reset = true;
             }
 
@@ -144,6 +156,16 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
 
         }
+    }
+
+    public void resetAfterPoint() {
+        player.resetDYA();
+        enemy.resetDYA();
+        ball.resetPosition(95, 95);
+        ball.dx = 0;
+        ball.dy = 0;
+        player.reset();
+        enemy.reset();
     }
 
     public boolean goal(GameObject a) {
@@ -162,6 +184,104 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return false;
     }
 
+    private void checkCollisions() {
+
+
+
+        if (collision(ball, tBorder)) {
+            ball.changeDY(tBorder);
+        }
+        else if(collision(ball, bBorder)) {
+            ball.changeDY(bBorder);
+        }
+        //ball with walls
+        if (collision(ball, trBorder)){
+            ball.changeDX(trBorder);
+        }
+        else if (collision(ball, tlBorder)) {
+            ball.changeDX(tlBorder);
+        }
+        else if (collision(ball, brBorder)) {
+            ball.changeDX(brBorder);
+        }
+        else if (collision(ball, blBorder)) {
+            ball.changeDX(blBorder);
+        }
+
+        //ball with cars
+        if (collision(ball, player)) {
+            ball.hit(player);
+        }
+        if (collision(ball, enemy)) {
+            ball.hit(enemy);
+        }
+
+        //player with top / bottom walls
+        if (collision(player, tBorder)) {
+            player.changeDY(tBorder);
+        }
+        else if(collision(player, bBorder)) {
+            player.changeDY(bBorder);
+        }
+        else
+            player.collidingY = false;
+
+        //player with left / right walls
+        if (collision(player, trBorder)){
+            player.changeDX(trBorder);
+        }
+        else if (collision(player, tlBorder)) {
+            player.changeDX(tlBorder);
+        }
+        else if (collision(player, brBorder)) {
+            player.changeDX(brBorder);
+        }
+        else if (collision(player, blBorder)) {
+            player.changeDX(blBorder);
+        }
+        else
+            player.collidingX = false;
+
+
+        //enemy with top / bottom walls
+        if (collision(enemy, tBorder)) {
+            enemy.changeDY(tBorder);
+        }
+        else if(collision(enemy, bBorder)) {
+            enemy.changeDY(bBorder);
+        }
+        else
+            enemy.collidingY = false;
+
+        //enemy with left / right walls
+        if (collision(enemy, trBorder)){
+            enemy.changeDX(trBorder);
+        }
+        else if (collision(enemy, tlBorder)) {
+            enemy.changeDX(tlBorder);
+        }
+        else if (collision(enemy, brBorder)) {
+            enemy.changeDX(brBorder);
+        }
+        else if (collision(enemy, blBorder)) {
+            enemy.changeDX(blBorder);
+        }
+        else
+            enemy.collidingX = false;
+
+        if (collision(player, enemy)) {
+            if (player.speed > enemy.speed)
+                enemy.reset();
+            else if (player.speed < enemy.speed)
+                player.reset();
+            else {
+                player.reset();
+                enemy.reset();
+            }
+        }
+
+    }
+
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
@@ -178,12 +298,15 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             trBorder.draw(canvas);
             blBorder.draw(canvas);
             brBorder.draw(canvas);
+
+
             player.draw(canvas);
             enemy.draw(canvas);
             ball.draw(canvas);
             canvas.restoreToCount(savedState);
             uiJoystick.draw(canvas);
             uiBoost.draw(canvas);
+
             drawText(canvas);
         }
     }
@@ -222,6 +345,5 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         }
         return false;
     }
-
 
 }

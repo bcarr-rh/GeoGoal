@@ -22,14 +22,18 @@ public class Player extends GameObject{
     private static final double DEGREE_TO_RADIAN = Math.PI/180;
     private static final double RADIAN_TO_DEGREE = 180/Math.PI;
     private Animation animation = new Animation();
+    public boolean collidingX = false;
+    public boolean collidingY = false;
+    public double speed = 0;
+
     public Player(Bitmap res, int w, int h, int numFrames) {
         degrees = 0;
-        x = 100;
+        x = 250;
         setY(h);
 
-        //y = GameP anel.HEIGHT / 2 - h / 2;
+        //y = Game Panel.HEIGHT / 2 - h / 2;
         dy = 0;
-        dx = 1;
+        dx = 0;
         score = 0;
         height = h;
         width = w;
@@ -49,13 +53,24 @@ public class Player extends GameObject{
 
     public void setUp(boolean b){up = b;}
 
-    public void update(Point movePoint)
+    public void update(Point movePoint, int boost)
     {
-        degrees = (float)Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
-        double velocity = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
-        this.x += movePoint.x * .1;
-        this.y += movePoint.y * .1;
+        if (movePoint.x != 0 && movePoint.y != 0) {
+            degrees = (float) Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
+            speed = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
 
+            if (!collidingX) {
+                dx = movePoint.x * .1 + boost;
+            }
+            if (!collidingY) {
+                dy = movePoint.y * .1 + boost;
+            }
+
+            this.x += dx;
+            this.y += dy;
+
+
+        }
         animation.update();
     }
 
@@ -81,6 +96,35 @@ public class Player extends GameObject{
                 break;
             default: break;
         }
+    }
+
+    public void changeDX(GameObject a) {
+        this.dx *= -1;
+
+        if (a.x < 1000)
+            this.x = (int) (a.x + this.width * 1.5);
+        if (a.x > 1000)
+            this.x = (int) (a.x - this.width * 1.5);
+
+        collidingX = true;
+    }
+    public void changeDY(GameObject a) {
+        this.dy *= -1;
+
+        if (a.y < 500)
+            this.y = (int) (a.y + this.width);
+        if (a.y > 500)
+            this.y = (int) (a.y - this.width);
+
+        collidingY = true;
+    }
+
+    public void reset() {
+        this.x = 250;
+        this.dx = 0;
+        this.dy = 0;
+        this.setY(80);
+        this.speed = 0;
     }
 
     public int getScore(){return score;}

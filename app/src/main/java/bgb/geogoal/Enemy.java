@@ -14,16 +14,22 @@ public class Enemy extends GameObject {
     private boolean up;
     private boolean playing;
     private Animation animation = new Animation();
+    public double speed = 0;
+
+
+    public boolean collidingX = false;
+    public boolean collidingY = false;
 
     public Enemy(Bitmap res, int w, int h, int numFrames) {
 
-        x = GamePanel.WIDTH - 200;
+
         setY(h);
         dy = 0;
+        dx = 0;
         score = 0;
         height = h;
         width = w;
-
+        x = GamePanel.WIDTH - (200 + this.width);
         Bitmap[] image = new Bitmap[numFrames];
         spritesheet = res;
 
@@ -42,6 +48,15 @@ public class Enemy extends GameObject {
 
     public void update() {
         animation.update();
+
+        //fill this in later
+        if (!collidingX){}
+            //dx = movePoint.x * .1;
+        if (!collidingY){}
+            //dy = movePoint.y * .1;
+
+        //figure this out later in AI sprint
+        //speed = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
 
     }
 
@@ -88,5 +103,34 @@ public class Enemy extends GameObject {
 
     public void increaseScore() {
         score++;
+    }
+
+    public void changeDX(GameObject a) {
+        this.dx *= -1;
+
+        if (a.x < 1000)
+            this.x = (int) (a.x + this.width * 1.5);
+        if (a.x > 1000)
+            this.x = (int) (a.x - this.width * 1.5);
+
+        collidingX = true;
+    }
+    public void changeDY(GameObject a) {
+        this.dy *= -1;
+
+        if (a.y < 500)
+            this.y = (int) (a.y + this.width);
+        if (a.y > 500)
+            this.y = (int) (a.y - this.width);
+
+        collidingY = true;
+    }
+
+    public void reset() {
+        this.setY(80);
+        this.dx = 0;
+        this.dy = 0;
+        this.speed = 0;
+        this.x = GamePanel.WIDTH - (200 + this.width);
     }
 }
