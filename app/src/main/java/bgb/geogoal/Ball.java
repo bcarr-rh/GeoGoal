@@ -13,8 +13,8 @@ public class Ball extends GameObject {
     public Ball(Bitmap res, int w, int h, int numFrames) {
 
         resetPosition(w, h);
-        dy = 0;
-        dx = 0;
+        //dx = -20;
+        //dy = -10;
         height = h;
         width = w;
 
@@ -27,8 +27,7 @@ public class Ball extends GameObject {
 
         animation.setFrames(image);
         animation.setDelay(500);
-//        dx = 20;
-//        dy = -10;
+
 
     }
 
@@ -72,11 +71,38 @@ public class Ball extends GameObject {
         dx = 0;
     }
 
-    public void changeDX() {
-        dx *= -1;
+    public void changeDX(GameObject a) {
+        this.dx *= -.9;
+
+
+        if (a.x < 1000) {
+            double overlap = Math.abs(a.x + a.width - this.x);
+            this.x = (int) (a.x + a.width + overlap + 1);
+        }
+        if (a.x > 1000) {
+            double overlap = Math.abs(a.x - (this.x + this.width));
+            this.x = (int) (a.x - (overlap + 1 + this.width));
+        }
+
     }
 
-    public void changeDY() {
-        dy *= -1;
+    public void changeDY(GameObject a) {
+        this.dy *= -.9;
+
+        if (a.y < 500) {
+            double overlap = Math.abs(a.y + a.height - this.y);
+            this.y = (int) (a.y + a.height + overlap + 1);
+        }
+        if (a.y > 500) {
+            double overlap = Math.abs(a.y - (this.y + this.height));
+            this.y = (int) (a.y  - (overlap + 1 + this.height));
+        }
+
+    }
+
+    public void hit(GameObject a) {
+
+        this.dx = a.dx + this.dx;
+        this.dy = a.dy + this.dy;
     }
 }

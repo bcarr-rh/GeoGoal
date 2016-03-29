@@ -125,50 +125,26 @@ public class UIDrawingViewBoostButton extends View {
         // get touch event coordinates and make transparent circle from it
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                // it's the first pointer, so clear all existing pointers data
-                clearCirclePointer();
-
-                xTouch = (int) event.getX(0);
-                yTouch = (int) event.getY(0);
-
-                // check if we've touched inside the circle
-                touchedCircle = getTouchedCircle(xTouch, yTouch);
-                mCirclePointer.put(event.getPointerId(0), touchedCircle);
-                if(touchedCircle != null) {
-                    touched = true;
-                }
+                touched = true;
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                Log.w(TAG, "Pointer down");
-                // It secondary pointers, so obtain their ids and check circle
-                pointerId = event.getPointerId(actionIndex);
-
-                xTouch = (int) event.getX(actionIndex);
-                yTouch = (int) event.getY(actionIndex);
-
-                // check if we've touched inside the circle
-                touchedCircle = getTouchedCircle(xTouch, yTouch);
-                if (touchedCircle != null) {
-                    touched = true;
-                }
+                touched = true;
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 break;
 
             case MotionEvent.ACTION_UP:
-                clearCirclePointer();
+                touched = false;
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                // not general pointer was up
-                pointerId = event.getPointerId(actionIndex);
-
-                mCirclePointer.remove(pointerId);
+                touched = false;
                 break;
 
             case MotionEvent.ACTION_CANCEL:
+                touched = false;
                 break;
 
             default:
