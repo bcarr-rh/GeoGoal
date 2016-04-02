@@ -42,6 +42,8 @@ public class UIDrawingViewBoostButton extends View {
     private static final int JOYSTICK_PULL = 100;
     private static final String TAG = "CirclesDrawingView";
 
+    static Boolean touched = false;
+
     /** Main bitmap */
     private Bitmap mBitmap = null;
 
@@ -115,8 +117,7 @@ public class UIDrawingViewBoostButton extends View {
     }
 
 
-    public Boolean TouchEvent(final MotionEvent event) {
-        Boolean touched = false;
+    public int TouchEvent(final MotionEvent event) {
         CircleArea touchedCircle;
         int xTouch;
         int yTouch;
@@ -160,16 +161,19 @@ public class UIDrawingViewBoostButton extends View {
 
             case MotionEvent.ACTION_UP:
                 clearCirclePointer();
+                touched = false;
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
                 // not general pointer was up
+                touched = false;
                 pointerId = event.getPointerId(actionIndex);
 
                 mCirclePointer.remove(pointerId);
                 break;
 
             case MotionEvent.ACTION_CANCEL:
+                touched = false;
                 break;
 
             default:
@@ -177,7 +181,7 @@ public class UIDrawingViewBoostButton extends View {
                 break;
         }
 
-        return touched;
+        return touched?10:0;
     }
 
     /**
