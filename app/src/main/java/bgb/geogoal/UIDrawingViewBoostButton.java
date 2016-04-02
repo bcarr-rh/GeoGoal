@@ -1,36 +1,37 @@
-package bgb.geogoal;
+
+        package bgb.geogoal;
 
 /**
  * Created by Ben on 3/4/2016.
  */
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
+        import android.content.Context;
+        import android.graphics.Bitmap;
+        import android.graphics.Canvas;
+        import android.graphics.Paint;
+        import android.graphics.Point;
+        import android.graphics.Rect;
+        import android.util.AttributeSet;
+        import android.util.Log;
+        import android.util.SparseArray;
+        import android.view.Display;
+        import android.view.MotionEvent;
+        import android.view.View;
+        import android.view.WindowManager;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.util.SparseArray;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
+        import android.content.Context;
+        import android.graphics.Bitmap;
+        import android.graphics.Canvas;
+        import android.graphics.Paint;
+        import android.graphics.Point;
+        import android.graphics.Rect;
+        import android.util.AttributeSet;
+        import android.util.Log;
+        import android.util.SparseArray;
+        import android.view.Display;
+        import android.view.MotionEvent;
+        import android.view.View;
+        import android.view.WindowManager;
 
 /**
  * Created by Ben on 3/4/2016.
@@ -125,26 +126,50 @@ public class UIDrawingViewBoostButton extends View {
         // get touch event coordinates and make transparent circle from it
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                touched = true;
+                // it's the first pointer, so clear all existing pointers data
+                clearCirclePointer();
+
+                xTouch = (int) event.getX(0);
+                yTouch = (int) event.getY(0);
+
+                // check if we've touched inside the circle
+                touchedCircle = getTouchedCircle(xTouch, yTouch);
+                mCirclePointer.put(event.getPointerId(0), touchedCircle);
+                if(touchedCircle != null) {
+                    touched = true;
+                }
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
-                touched = true;
+                Log.w(TAG, "Pointer down");
+                // It secondary pointers, so obtain their ids and check circle
+                pointerId = event.getPointerId(actionIndex);
+
+                xTouch = (int) event.getX(actionIndex);
+                yTouch = (int) event.getY(actionIndex);
+
+                // check if we've touched inside the circle
+                touchedCircle = getTouchedCircle(xTouch, yTouch);
+                if (touchedCircle != null) {
+                    touched = true;
+                }
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 break;
 
             case MotionEvent.ACTION_UP:
-                touched = false;
+                clearCirclePointer();
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                touched = false;
+                // not general pointer was up
+                pointerId = event.getPointerId(actionIndex);
+
+                mCirclePointer.remove(pointerId);
                 break;
 
             case MotionEvent.ACTION_CANCEL:
-                touched = false;
                 break;
 
             default:
@@ -176,7 +201,7 @@ public class UIDrawingViewBoostButton extends View {
     private CircleArea getTouchedCircle(final int xTouch, final int yTouch) {
         CircleArea touched = null;
         if ((BoosteCircle.centerX - xTouch) * (BoosteCircle.centerX - xTouch) + (BoosteCircle.centerY - yTouch) * (BoosteCircle.centerY - yTouch) <= BoosteCircle.radius * BoosteCircle.radius) {
-                touched = BoosteCircle;
+            touched = BoosteCircle;
         }
         return touched;
     }
@@ -187,4 +212,3 @@ public class UIDrawingViewBoostButton extends View {
         mMeasuredRect = new Rect(0, 0, getMeasuredWidth(), getMeasuredHeight());
     }
 }
-

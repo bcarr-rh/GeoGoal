@@ -4,6 +4,7 @@ package bgb.geogoal;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -100,11 +101,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (uiBoost.TouchEvent(event)) {
-            player.update(uiJoystick.TouchEvent(event), 10);
-        }
+        int boost = 0;
+
+        if (uiBoost.TouchEvent(event))
+            boost = 10;
         else
-            player.update(uiJoystick.TouchEvent(event), 0);
+            boost = 0;
+
+        player.update(uiJoystick.TouchEvent(event), boost);
 
 
 
@@ -131,7 +135,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         if (player.getPlaying()) {
 
             //bg.update();
-            enemy.update();
+            enemy.update(new Point(ball.x, ball.y));
             ball.update();
 
             if (goal(ball)) {
