@@ -2,6 +2,7 @@ package bgb.geogoal;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 
 import java.util.Random;
 
@@ -15,6 +16,7 @@ public class Enemy extends GameObject {
     private boolean playing;
     private Animation animation = new Animation();
     public double speed = 0;
+    float degrees = 0;
 
 
     public boolean collidingX = false;
@@ -46,22 +48,33 @@ public class Enemy extends GameObject {
         up = b;
     }
 
-    public void update() {
+    public void update(Point ballLoc) {
         animation.update();
+
+        Point desiredPos = findDestination(ballLoc, new Point(1795,540));
+        double deltaX = desiredPos.x - this.x;
+        double deltaY = desiredPos.y - this.y;
+        degrees = (float) Math.toDegrees(Math.atan2(deltaY, deltaX));
+
 
         //fill this in later
         if (!collidingX){}
-            //dx = movePoint.x * .1;
+            dx = deltaX * .2;
         if (!collidingY){}
-            //dy = movePoint.y * .1;
+            dy = deltaY * .2;
 
-        //figure this out later in AI sprint
-        //speed = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
+        this.x += dx;
+        this.y += dy;
+
+        speed = Math.sqrt(desiredPos.x * desiredPos.x + desiredPos.y * desiredPos.y);
 
     }
 
     public void draw(Canvas canvas) {
-        canvas.drawBitmap(animation.getImage(), x, y, null);
+        canvas.save();
+        canvas.rotate(degrees, x + (this.width / 2), y + (this.height / 2)); //rotate the canvas' matrix
+        canvas.drawBitmap(animation.getImage(), x, y, null); //draw the ball on the "rotated" canvas
+        canvas.restore(); //rotate the canvas' matrix back
     }
 
     public void setY(int h) {
@@ -132,5 +145,14 @@ public class Enemy extends GameObject {
         this.dy = 0;
         this.speed = 0;
         this.x = GamePanel.WIDTH - (200 + this.width);
+    }
+
+    public Point findDestination(Point ballPos, Point goalPos) {
+        Point destination = new Point(0,0);
+
+        destination.x = (ballPos.x + goalPos.x) / 2;
+        destination.y = (ballPos.y + goalPos.y) / 2;
+
+        return destination;
     }
 }
