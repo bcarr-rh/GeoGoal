@@ -17,7 +17,6 @@ import android.graphics.Typeface;
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public static final int WIDTH = 1920;
     public static final int HEIGHT = 1080;
-    public static final int MOVESPEED = -5;
     private MainThread thread;
     private Background bg;
     private Player player;
@@ -36,7 +35,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private boolean reset;
     private boolean newGameCreated;
     private boolean started;
-    private boolean pointScored = false;
 
 
     public GamePanel(Context context) {
@@ -92,7 +90,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         bBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.bot), 0, 1043);
 
 
-
         //we can safely start the game loop
         thread.setRunning(true);
         thread.start();
@@ -101,31 +98,28 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int boost = 0;
+        int boost;
 
-        if (uiBoost.TouchEvent(event))
+        if (uiBoost.TouchEvent(event)) {
             boost = 10;
-        else
+        } else {
             boost = 0;
+        }
+
 
         player.update(uiJoystick.TouchEvent(event), boost);
-
-
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (!player.getPlaying() && newGameCreated && reset) {
                 player.setPlaying(true);
-                player.setUp(true);
             }
             if (player.getPlaying()) {
                 if (!started) started = true;
                 reset = false;
-                player.setUp(true);
             }
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            player.setUp(false);
             return true;
         }
         return super.onTouchEvent(event);
@@ -134,8 +128,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void update() {
         if (player.getPlaying()) {
 
-            //bg.update();
-            enemy.update(new Point(ball.x, ball.y));
+            enemy.update(new Point(player.getX(), player.getY()), new Point(ball.x, ball.y));
             ball.update();
 
             if (goal(ball)) {
@@ -144,9 +137,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             checkCollisions();
 
-        }
-
-        else {
+        } else {
 
             if (!reset) {
                 newGameCreated = false;
@@ -163,8 +154,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void resetAfterPoint() {
-        player.resetDYA();
-        enemy.resetDYA();
         ball.resetPosition(95, 95);
         ball.dx = 0;
         ball.dy = 0;
@@ -173,14 +162,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public boolean goal(GameObject a) {
-        if (a.getRectangle().exactCenterX() < 140) {
-            if (a.getRectangle().exactCenterY() > 440 && a.getRectangle().exactCenterY() < 640) {
+        if (a.getRectangle().exactCenterX() < 150) {
+            if (a.getRectangle().exactCenterY() > 430 && a.getRectangle().exactCenterY() < 650) {
                 enemy.increaseScore();
                 return true;
             }
         }
-        if (a.getRectangle().exactCenterX() > 1780) {
-            if (a.getRectangle().exactCenterY() > 440 && a.getRectangle().exactCenterY() < 640) {
+        if (a.getRectangle().exactCenterX() > 1770) {
+            if (a.getRectangle().exactCenterY() > 430 && a.getRectangle().exactCenterY() < 650) {
                 player.increaseScore();
                 return true;
             }
@@ -191,24 +180,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private void checkCollisions() {
 
 
-
         if (collision(ball, tBorder)) {
             ball.changeDY(tBorder);
-        }
-        else if(collision(ball, bBorder)) {
+        } else if (collision(ball, bBorder)) {
             ball.changeDY(bBorder);
         }
         //ball with walls
-        if (collision(ball, trBorder)){
+        if (collision(ball, trBorder)) {
             ball.changeDX(trBorder);
-        }
-        else if (collision(ball, tlBorder)) {
+        } else if (collision(ball, tlBorder)) {
             ball.changeDX(tlBorder);
-        }
-        else if (collision(ball, brBorder)) {
+        } else if (collision(ball, brBorder)) {
             ball.changeDX(brBorder);
-        }
-        else if (collision(ball, blBorder)) {
+        } else if (collision(ball, blBorder)) {
             ball.changeDX(blBorder);
         }
 
@@ -223,54 +207,42 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         //player with top / bottom walls
         if (collision(player, tBorder)) {
             player.changeDY(tBorder);
-        }
-        else if(collision(player, bBorder)) {
+        } else if (collision(player, bBorder)) {
             player.changeDY(bBorder);
-        }
-        else
+        } else
             player.collidingY = false;
 
         //player with left / right walls
-        if (collision(player, trBorder)){
+        if (collision(player, trBorder)) {
             player.changeDX(trBorder);
-        }
-        else if (collision(player, tlBorder)) {
+        } else if (collision(player, tlBorder)) {
             player.changeDX(tlBorder);
-        }
-        else if (collision(player, brBorder)) {
+        } else if (collision(player, brBorder)) {
             player.changeDX(brBorder);
-        }
-        else if (collision(player, blBorder)) {
+        } else if (collision(player, blBorder)) {
             player.changeDX(blBorder);
-        }
-        else
+        } else
             player.collidingX = false;
 
 
         //enemy with top / bottom walls
         if (collision(enemy, tBorder)) {
             enemy.changeDY(tBorder);
-        }
-        else if(collision(enemy, bBorder)) {
+        } else if (collision(enemy, bBorder)) {
             enemy.changeDY(bBorder);
-        }
-        else
+        } else
             enemy.collidingY = false;
 
         //enemy with left / right walls
-        if (collision(enemy, trBorder)){
+        if (collision(enemy, trBorder)) {
             enemy.changeDX(trBorder);
-        }
-        else if (collision(enemy, tlBorder)) {
+        } else if (collision(enemy, tlBorder)) {
             enemy.changeDX(tlBorder);
-        }
-        else if (collision(enemy, brBorder)) {
+        } else if (collision(enemy, brBorder)) {
             enemy.changeDX(brBorder);
-        }
-        else if (collision(enemy, blBorder)) {
+        } else if (collision(enemy, blBorder)) {
             enemy.changeDX(blBorder);
-        }
-        else
+        } else
             enemy.collidingX = false;
 
         if (collision(player, enemy)) {
@@ -316,9 +288,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void newGame() {
-        player.resetDYA();
         player.setY(80);
-        enemy.resetDYA();
         enemy.setY(80);
         newGameCreated = true;
     }
@@ -344,10 +314,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public boolean collision(GameObject a, GameObject b) {
-        if (Rect.intersects(a.getRectangle(), b.getRectangle())) {
-            return true;
-        }
-        return false;
+        return Rect.intersects(a.getRectangle(), b.getRectangle());
     }
 
 }
