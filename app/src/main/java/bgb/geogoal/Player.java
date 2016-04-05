@@ -14,9 +14,6 @@ public class Player extends GameObject{
 
     private Bitmap spritesheet;
     private int score;
-    private double dya;
-    private double dxa;
-    private boolean up;
     private boolean playing;
     private float degrees;
     private static final double DEGREE_TO_RADIAN = Math.PI/180;
@@ -50,8 +47,6 @@ public class Player extends GameObject{
         animation.setDelay(10);
 
     }
-
-    public void setUp(boolean b){up = b;}
 
     public void update(Point movePoint, int boost)
     {
@@ -130,7 +125,6 @@ public class Player extends GameObject{
     public int getScore(){return score;}
     public boolean getPlaying(){return playing;}
     public void setPlaying(boolean b){playing = b;}
-    public void resetDYA(){dya = 0;}
     public void resetScore(){score = 0;}
     public void increaseScore() {score++;}
 }

@@ -10,10 +10,6 @@ import java.util.Random;
 public class Enemy extends GameObject {
     private Bitmap spritesheet;
     private int score;
-    private double dya;
-    private double dxa;
-    private boolean up;
-    private boolean playing;
     private Animation animation = new Animation();
     public double speed = 0;
     float degrees = 0;
@@ -23,7 +19,6 @@ public class Enemy extends GameObject {
     public boolean collidingY = false;
 
     public Enemy(Bitmap res, int w, int h, int numFrames) {
-
 
         setY(h);
         dy = 0;
@@ -44,24 +39,29 @@ public class Enemy extends GameObject {
 
     }
 
-    public void setUp(boolean b) {
-        up = b;
-    }
-
-    public void update(Point ballLoc) {
+    public void update(Point player, Point ballLoc) {
         animation.update();
 
-        Point desiredPos = findDestination(ballLoc, new Point(1795,540));
+        Point desiredPos;
+
+        // The player is closer to the ball so defend
+        if (isCloser(player, ballLoc)) {
+            desiredPos = findDestination(ballLoc, new Point(1795, 540));
+        } else {// Enemy is closer so try to score
+            desiredPos = findDestination(ballLoc, new Point(125, 540));
+        }
         double deltaX = desiredPos.x - this.x;
         double deltaY = desiredPos.y - this.y;
         degrees = (float) Math.toDegrees(Math.atan2(deltaY, deltaX));
 
 
         //fill this in later
-        if (!collidingX){}
-            dx = deltaX * .2;
-        if (!collidingY){}
-            dy = deltaY * .2;
+        if (!collidingX) {
+        }
+        dx = deltaX * .2;
+        if (!collidingY) {
+        }
+        dy = deltaY * .2;
 
         this.x += dx;
         this.y += dy;
@@ -98,18 +98,6 @@ public class Enemy extends GameObject {
         return score;
     }
 
-    public boolean getPlaying() {
-        return playing;
-    }
-
-    public void setPlaying(boolean b) {
-        playing = b;
-    }
-
-    public void resetDYA() {
-        dya = 0;
-    }
-
     public void resetScore() {
         score = 0;
     }
@@ -128,6 +116,7 @@ public class Enemy extends GameObject {
 
         collidingX = true;
     }
+
     public void changeDY(GameObject a) {
         this.dy *= -1;
 
@@ -148,11 +137,17 @@ public class Enemy extends GameObject {
     }
 
     public Point findDestination(Point ballPos, Point goalPos) {
-        Point destination = new Point(0,0);
+        Point destination = new Point(0, 0);
 
         destination.x = (ballPos.x + goalPos.x) / 2;
         destination.y = (ballPos.y + goalPos.y) / 2;
 
         return destination;
+    }
+
+    public boolean isCloser(Point player, Point ball) {
+        double playerDistance = Math.sqrt(Math.pow((player.x - ball.x), 2) + Math.pow((player.y - ball.y), 2));
+        double enemyDistance = Math.sqrt(Math.pow((this.x - ball.x), 2) + Math.pow((this.y - ball.y), 2));
+        return playerDistance < enemyDistance;
     }
 }
