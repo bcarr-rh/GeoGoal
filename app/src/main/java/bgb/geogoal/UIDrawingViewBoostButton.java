@@ -37,8 +37,8 @@
  * Created by Ben on 3/4/2016.
  */
 public class UIDrawingViewBoostButton extends View {
-    private static final int BOUNDRY_WIDTH = 200;
-    private static final int CIRCLE_WIDTH = 75;
+    private static final int BOUNDRY_WIDTH = 400;
+    private static final int CIRCLE_WIDTH = 125;
     private static final int JOYSTICK_PULL = 100;
     private static final String TAG = "CirclesDrawingView";
 
@@ -104,7 +104,7 @@ public class UIDrawingViewBoostButton extends View {
         display.getSize(size);
         int width = size.x;
         int height  = size.y;
-        BoosteCircle = (new CircleArea(width-BOUNDRY_WIDTH, height/2, CIRCLE_WIDTH));
+        BoosteCircle = (new CircleArea(width-(height)/4, (3*height)/4, CIRCLE_WIDTH));
 
         mCirclePaint = new Paint();
         mCirclePaint.setColor(0x60FFFFFF);
@@ -129,15 +129,16 @@ public class UIDrawingViewBoostButton extends View {
             case MotionEvent.ACTION_DOWN:
                 // it's the first pointer, so clear all existing pointers data
                 clearCirclePointer();
+                for (int i = 0; i < event.getPointerCount(); i++) {
+                    xTouch = (int) event.getX(i);
+                    yTouch = (int) event.getY(i);
 
-                xTouch = (int) event.getX(0);
-                yTouch = (int) event.getY(0);
-
-                // check if we've touched inside the circle
-                touchedCircle = getTouchedCircle(xTouch, yTouch);
-                mCirclePointer.put(event.getPointerId(0), touchedCircle);
-                if(touchedCircle != null) {
-                    touched = true;
+                    // check if we've touched inside the circle
+                    touchedCircle = getTouchedCircle(xTouch, yTouch);
+                    mCirclePointer.put(event.getPointerId(i), touchedCircle);
+                    if (touchedCircle != null) {
+                        touched = true;
+                    }
                 }
                 break;
 
@@ -160,15 +161,23 @@ public class UIDrawingViewBoostButton extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
-                clearCirclePointer();
-                touched = false;
+                for (int i = 0; i < event.getPointerCount(); i++) {
+                    xTouch = (int) event.getX(i);
+                    yTouch = (int) event.getY(i);
+
+                    // check if we've touched inside the circle
+                    touchedCircle = getTouchedCircle(xTouch, yTouch);
+                    if (touchedCircle != null) {
+                        clearCirclePointer();
+                        touched = false;
+                    }
+                }
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
                 // not general pointer was up
                 touched = false;
                 pointerId = event.getPointerId(actionIndex);
-
                 mCirclePointer.remove(pointerId);
                 break;
 

@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -18,8 +19,8 @@ import android.view.WindowManager;
  * Created by Ben on 3/4/2016.
  */
 public class UIDrawingViewJoystick extends View {
-    private static final int BOUNDRY_WIDTH = 200;
-    private static final int CIRCLE_WIDTH = 75;
+    private static final int BOUNDRY_WIDTH = 300;
+    private static final int CIRCLE_WIDTH = 125;
     private static final int JOYSTICK_PULL = 100;
     private static final String TAG = "CirclesDrawingView";
 
@@ -84,7 +85,7 @@ public class UIDrawingViewJoystick extends View {
         display.getSize(size);
         int width = size.x;
         int height  = size.y;
-        JoyStickStartPoint.set(BOUNDRY_WIDTH,height/2);
+        JoyStickStartPoint.set((height)/4,(3*height)/4);
         JoyStickCircle = (new CircleArea(JoyStickStartPoint.x, JoyStickStartPoint.y, CIRCLE_WIDTH));
 
         mCirclePaint = new Paint();
@@ -111,17 +112,19 @@ public class UIDrawingViewJoystick extends View {
             case MotionEvent.ACTION_DOWN:
                 // it's the first pointer, so clear all existing pointers data
                 clearCirclePointer();
+                for (int i = 0; i < event.getPointerCount(); i++) {
 
-                xTouch = event.getX(0);
-                yTouch = event.getY(0);
+                    xTouch = event.getX(i);
+                    yTouch = event.getY(i);
 
-                // check if we've touched inside some circle
-                touchedCircle = getTouchedCircle((int)xTouch, (int)yTouch);
-                if (touchedCircle != null) {
-                    touchedCircle.centerX = (int) xTouch;
-                    touchedCircle.centerY = (int) yTouch;
+                    // check if we've touched inside some circle
+                    touchedCircle = getTouchedCircle((int) xTouch, (int) yTouch);
+                    if (touchedCircle != null) {
+                        touchedCircle.centerX = (int) xTouch;
+                        touchedCircle.centerY = (int) yTouch;
+                    }
+                    mCirclePointer.put(event.getPointerId(i), touchedCircle);
                 }
-                mCirclePointer.put(event.getPointerId(0), touchedCircle);
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN:
@@ -173,9 +176,17 @@ public class UIDrawingViewJoystick extends View {
                 break;
 
             case MotionEvent.ACTION_UP:
-                JoyStickCircle.centerX = JoyStickStartPoint.x;
-                JoyStickCircle.centerY = JoyStickStartPoint.y;
-                clearCirclePointer();
+                for (int i = 0; i < event.getPointerCount(); i++) {
+
+                    xTouch = event.getX(i);
+                    yTouch = event.getY(i);
+                    touchedCircle = getTouchedCircle((int) xTouch, (int) yTouch);
+                    if (touchedCircle != null) {
+                        JoyStickCircle.centerX = JoyStickStartPoint.x;
+                        JoyStickCircle.centerY = JoyStickStartPoint.y;
+                        clearCirclePointer();
+                    }
+                }
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
