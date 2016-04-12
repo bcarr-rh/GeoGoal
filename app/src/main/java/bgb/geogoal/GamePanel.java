@@ -131,11 +131,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             enemy.update(new Point(player.getX(), player.getY()), new Point(ball.x, ball.y));
             ball.update();
 
+
             if (goal(ball)) {
                 player.setPlaying(false);
             }
 
             checkCollisions();
+
 
         } else {
 
@@ -255,6 +257,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
                 enemy.reset();
             }
         }
+
 
     }
 

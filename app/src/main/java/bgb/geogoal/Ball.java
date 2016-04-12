@@ -38,8 +38,22 @@ public class Ball extends GameObject {
 
         //hitDetection()
 
-        x += dx;
-        y += dy;
+        if (dx < 20 && dx > -20) {
+            x += dx;
+        }
+        else {
+            dx = dx / Math.abs(dx);
+            x += (int)dx * 20;
+        }
+        if (dy < 20 && dy > -20) {
+            y += dy;
+        }
+        else {
+            dy = (dy / Math.abs(dy));
+            y += (int)dy*20;
+        }
+
+
     }
 
     public void hitDetection(int sourceSpeed, int sourceX, int sourceY) {

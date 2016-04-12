@@ -48,7 +48,7 @@ public class Enemy extends GameObject {
         if (isCloser(player, ballLoc)) {
             desiredPos = findDestination(ballLoc, new Point(1795, 540));
         } else {// Enemy is closer so try to score
-            desiredPos = findDestination(ballLoc, new Point(125, 540));
+            desiredPos = ballLoc;//(ballLoc, new Point(125, 540));
         }
         double deltaX = desiredPos.x - this.x;
         double deltaY = desiredPos.y - this.y;
@@ -58,15 +58,15 @@ public class Enemy extends GameObject {
         //fill this in later
         if (!collidingX) {
         }
-        dx = deltaX * .2;
+        dx = deltaX * .05;
         if (!collidingY) {
         }
-        dy = deltaY * .2;
+        dy = deltaY * .05;
 
         this.x += dx;
         this.y += dy;
 
-        speed = Math.sqrt(desiredPos.x * desiredPos.x + desiredPos.y * desiredPos.y);
+        speed = Math.sqrt(dx * dx  + dy * dy);
 
     }
 
@@ -148,6 +148,6 @@ public class Enemy extends GameObject {
     public boolean isCloser(Point player, Point ball) {
         double playerDistance = Math.sqrt(Math.pow((player.x - ball.x), 2) + Math.pow((player.y - ball.y), 2));
         double enemyDistance = Math.sqrt(Math.pow((this.x - ball.x), 2) + Math.pow((this.y - ball.y), 2));
-        return playerDistance < enemyDistance;
+        return playerDistance < enemyDistance ;
     }
 }

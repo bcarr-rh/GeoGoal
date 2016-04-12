@@ -52,7 +52,7 @@ public class Player extends GameObject{
     {
         if (movePoint.x != 0 && movePoint.y != 0) {
             degrees = (float) Math.toDegrees(Math.atan2(movePoint.y, movePoint.x));
-            speed = Math.sqrt(movePoint.x * movePoint.x + movePoint.y * movePoint.y);
+
 
             if (!collidingX) {
                 dx = movePoint.x * .1 + boost;
@@ -64,7 +64,7 @@ public class Player extends GameObject{
             this.x += dx;
             this.y += dy;
 
-
+            speed = Math.sqrt(dx * dx + dy * dy);
         }
         animation.update();
     }
