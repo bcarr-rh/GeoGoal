@@ -98,14 +98,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int boost;
-
-        if (uiBoost.TouchEvent(event)) {
-            boost = 10;
-        } else {
-            boost = 0;
-        }
-
+        int boost = uiBoost.TouchEvent(event);
 
         player.update(uiJoystick.TouchEvent(event), boost);
 

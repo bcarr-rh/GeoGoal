@@ -55,10 +55,10 @@ public class Player extends GameObject{
 
 
             if (!collidingX) {
-                dx = movePoint.x * .1 + boost;
+                dx = movePoint.x * .1 * boost ;
             }
             if (!collidingY) {
-                dy = movePoint.y * .1 + boost;
+                dy = movePoint.y * .1 * boost;
             }
 
             this.x += dx;
