@@ -19,8 +19,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public static final int HEIGHT = 1080;
     private MainThread thread;
     private Background bg;
-    private Player player;
-    private Enemy enemy;
+    public Player player;
+    public Enemy enemy;
     private UIDrawingViewJoystick uiJoystick;
     private UIDrawingViewBoostButton uiBoost;
     private Ball ball;
@@ -118,7 +118,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         return super.onTouchEvent(event);
     }
 
-    public void update() {
+    public boolean update() {
         if (player.getPlaying()) {
 
             enemy.update(new Point(player.getX(), player.getY()), new Point(ball.x, ball.y));
@@ -127,6 +127,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
             if (goal(ball)) {
                 player.setPlaying(false);
+                if ((player.getScore() == 5 || enemy.getScore() == 5) && Math.abs(player.getScore() - enemy.getScore()) > 2) {
+                    return false;
+                }
             }
 
             checkCollisions();
@@ -146,6 +149,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
 
         }
+        return true;
     }
 
     public void resetAfterPoint() {
