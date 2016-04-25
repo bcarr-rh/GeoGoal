@@ -1,6 +1,7 @@
 package bgb.geogoal;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 
 public class Background {
@@ -20,6 +21,10 @@ public class Background {
     public void draw(Canvas canvas) {
         canvas.drawBitmap(image, 0, 0, null);
 
+    }
+
+    public void drawEnd(Canvas canvas, Bitmap screen) {
+        canvas.drawBitmap(screen, 0, 0, null);
     }
 
     public void setVector(int dx) {
