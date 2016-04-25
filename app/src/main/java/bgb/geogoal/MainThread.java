@@ -76,9 +76,11 @@ public class MainThread extends Thread
 
         if (gamePanel.player.getScore() == 5) {
             //victory
+            this.gamePanel.drawEnd(0, canvas);
         }
         else {
             //defeat
+            this.gamePanel.drawEnd(1, canvas);
         }
     }
     public void setRunning(boolean b)
