@@ -24,6 +24,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private UIDrawingViewJoystick uiJoystick;
     private UIDrawingViewBoostButton uiBoost;
     private Ball ball;
+    private BoostCircle bs1;
+    private BoostCircle bs2;
+    private BoostCircle bs3;
+    private BoostCircle bs4;
 
     private Border tlBorder;
     private Border trBorder;
@@ -35,12 +39,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private boolean reset;
     private boolean newGameCreated;
     private boolean started;
+    private Context ContextForScreenSize;
 
 
     public GamePanel(Context context) {
         super(context);
 
-
+        ContextForScreenSize = context;
         //add the callback to the surfaceholder to intercept events
         getHolder().addCallback(this);
 
@@ -50,6 +55,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
         uiJoystick = new UIDrawingViewJoystick(context);
         uiBoost = new UIDrawingViewBoostButton(context);
+        bs1 = new BoostCircle(context,.35,.25);
+        bs2 = new BoostCircle(context,.65,.25);
+        bs3 = new BoostCircle(context,.35,.75);
+        bs4 = new BoostCircle(context,.65,.75);
     }
 
     @Override
@@ -79,7 +88,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         ball = new Ball(BitmapFactory.decodeResource(getResources(), R.drawable.ball), 95, 95, 2);
 
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.field));
-        player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 130, 80, 1);
+        player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 130, 80, 1, ContextForScreenSize);
         enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.enemy), 125, 80, 1);
 
         tlBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.topleft), 0, 0);
@@ -251,6 +260,19 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
+        if (collision(player, bs1)) {
+            player.resetBoost();
+        }
+        else if (collision(player, bs2)) {
+            player.resetBoost();
+        }
+        else if(collision(player, bs3)) {
+            player.resetBoost();
+        }
+        else if (collision(player, bs4)) {
+            player.resetBoost();
+        }
+
 
     }
 
@@ -278,6 +300,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             canvas.restoreToCount(savedState);
             uiJoystick.draw(canvas);
             uiBoost.draw(canvas);
+
+            bs1.onDraw(canvas);
+            bs2.onDraw(canvas);
+            bs3.onDraw(canvas);
+            bs4.onDraw(canvas);
 
             drawText(canvas);
         }
