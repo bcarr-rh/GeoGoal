@@ -28,8 +28,8 @@ public class MainThread extends Thread
         int frameCount =0;
         long targetTime = 1000/FPS;
 
-
-        while(running) {
+        long start = System.currentTimeMillis();
+        while(running && System.currentTimeMillis() - start < 180000) {
             startTime = System.nanoTime();
             canvas = null;
 
@@ -38,7 +38,7 @@ public class MainThread extends Thread
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
                     //this.gamePanel.draw(canvas);
-                    this.gamePanel.update();
+                    running = this.gamePanel.update();
                     this.gamePanel.draw(canvas);
                 }
             } catch (Exception e) {
@@ -72,6 +72,15 @@ public class MainThread extends Thread
                 totalTime = 0;
                 //System.out.println(averageFPS);
             //}
+        }
+
+        if (gamePanel.player.getScore() == 5) {
+            //victory
+            this.gamePanel.drawEnd(0, canvas);
+        }
+        else {
+            //defeat
+            this.gamePanel.drawEnd(1, canvas);
         }
     }
     public void setRunning(boolean b)
