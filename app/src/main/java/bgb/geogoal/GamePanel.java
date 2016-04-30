@@ -305,6 +305,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
 
             player.draw(canvas);
+            player.drawBoost(canvas);
             enemy.draw(canvas);
             ball.draw(canvas);
             canvas.restoreToCount(savedState);
