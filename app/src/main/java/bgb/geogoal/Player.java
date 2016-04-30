@@ -105,18 +105,15 @@ public class Player extends GameObject{
         animation.update();
     }
 
-    public void draw(Canvas canvas)
-    {
+    public void drawBoost(Canvas canvas) {
         //draw boost bar
 
         canvas.drawRect(boostBarOuter,boostOuterPaint);
-        canvas.drawRect(boostBarInner.left,boostBarInner.top,boostBarInner.right,boostBarInner.bottom- (2*boostValue), boostInnerPaint);
-
-
+        canvas.drawRect(boostBarInner.left, boostBarInner.top, boostBarInner.right, boostBarInner.bottom - (2 * boostValue), boostInnerPaint);
+    }
+    public void draw(Canvas canvas)
+    {
         canvas.save();
-
-
-
         canvas.rotate(degrees, x + (this.width / 2), y + (this.height / 2)); //rotate the canvas' matrix
         canvas.drawBitmap(animation.getImage(), x, y, null); //draw the ball on the "rotated" canvas
         canvas.restore(); //rotate the canvas' matrix back
