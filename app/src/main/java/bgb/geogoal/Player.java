@@ -81,6 +81,8 @@ public class Player extends GameObject{
 
     public void update(Point movePoint, int boost)
     {
+        animation.update();
+
         if (boost > 1 && boostValue > 0) {
             boostValue--;
         } else {
@@ -91,10 +93,10 @@ public class Player extends GameObject{
 
 
             if (!collidingX) {
-                dx = movePoint.x * .1 * boost ;
+                dx = movePoint.x * .05 * boost ;
             }
             if (!collidingY) {
-                dy = movePoint.y * .1 * boost;
+                dy = movePoint.y * .05 * boost;
             }
 
             this.x += dx;
@@ -102,14 +104,15 @@ public class Player extends GameObject{
 
             speed = Math.sqrt(dx * dx + dy * dy);
         }
-        animation.update();
+
     }
 
     public void drawBoost(Canvas canvas) {
         //draw boost bar
-
+        //canvas.save();
         canvas.drawRect(boostBarOuter,boostOuterPaint);
         canvas.drawRect(boostBarInner.left, boostBarInner.top, boostBarInner.right, boostBarInner.bottom - (2 * boostValue), boostInnerPaint);
+        //canvas.restore();
     }
     public void draw(Canvas canvas)
     {
