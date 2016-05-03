@@ -57,11 +57,11 @@ public class Enemy extends GameObject {
 
         //fill this in later
         if (!collidingX) {
-        }
         dx = deltaX * .05;
-        if (!collidingY) {
         }
+        if (!collidingY) {
         dy = deltaY * .05;
+        }
 
         this.x += dx;
         this.y += dy;

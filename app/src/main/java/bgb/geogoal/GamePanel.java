@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 
 
 public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
+
     public static final int WIDTH = 1920;
     public static final int HEIGHT = 1080;
     private MainThread thread;
@@ -62,10 +63,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
         uiJoystick = new UIDrawingViewJoystick(context);
         uiBoost = new UIDrawingViewBoostButton(context);
-        bs1 = new BoostCircle(context,.35,.25);
-        bs2 = new BoostCircle(context,.65,.25);
-        bs3 = new BoostCircle(context,.35,.75);
-        bs4 = new BoostCircle(context,.65,.75);
     }
 
     @Override
@@ -94,12 +91,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
 
 
-        ball = new Ball(BitmapFactory.decodeResource(getResources(), R.drawable.ball), 95, 95, 2);
+        ball = new Ball(BitmapFactory.decodeResource(getResources(), R.drawable.ball), 60, 57, 1);
         pause =  new PauseButton(BitmapFactory.decodeResource(getResources(), R.drawable.pause),64,64,1);
 
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.field));
-        player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 130, 80, 1, ContextForScreenSize);
-        enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.enemy), 125, 80, 1);
+        player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 60, 40, 1, ContextForScreenSize);
+        enemy = new Enemy(BitmapFactory.decodeResource(getResources(), R.drawable.enemy), 60, 40, 1);
 
         tlBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.topleft), 0, 0);
         trBorder = new Border(BitmapFactory.decodeResource(getResources(), R.drawable.topright), 1744, 0);
@@ -110,6 +107,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         victory = BitmapFactory.decodeResource(getResources(), R.drawable.victory);
         defeat = BitmapFactory.decodeResource(getResources(), R.drawable.defeat);
 
+        bs1 = new BoostCircle(BitmapFactory.decodeResource(getResources(), R.drawable.boostcircle), 50,50, 1, 480, 360);
+        bs2 = new BoostCircle(BitmapFactory.decodeResource(getResources(), R.drawable.boostcircle), 50,50, 1, 480, 1080);
+        bs3 = new BoostCircle(BitmapFactory.decodeResource(getResources(), R.drawable.boostcircle), 50,50, 1, 1440, 360);
+        bs4 = new BoostCircle(BitmapFactory.decodeResource(getResources(), R.drawable.boostcircle), 50,50, 1, 1440, 1080);
         //we can safely start the game loop
         thread.setRunning(true);
         thread.start();
@@ -121,6 +122,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         if (pause.TouchEvent(event)) {
             //TODO: add logic for pause
         }
+        int boost = uiBoost.TouchEvent(event);
         int boost = uiBoost.TouchEvent(event);
 
         player.update(uiJoystick.TouchEvent(event), boost);
@@ -184,14 +186,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public boolean goal(GameObject a) {
-        if (a.getRectangle().exactCenterX() < 150) {
-            if (a.getRectangle().exactCenterY() > 430 && a.getRectangle().exactCenterY() < 650) {
+        if (a.getRectangle().exactCenterX() < 175) {
+            if (a.getRectangle().exactCenterY() > 400 && a.getRectangle().exactCenterY() < 675) {
                 enemy.increaseScore();
                 return true;
             }
         }
-        if (a.getRectangle().exactCenterX() > 1770) {
-            if (a.getRectangle().exactCenterY() > 430 && a.getRectangle().exactCenterY() < 650) {
+        if (a.getRectangle().exactCenterX() > 1750) {
+            if (a.getRectangle().exactCenterY() > 400 && a.getRectangle().exactCenterY() < 675) {
                 player.increaseScore();
                 return true;
             }
@@ -204,9 +206,11 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         if (collision(ball, tBorder)) {
             ball.changeDY(tBorder);
-        } else if (collision(ball, bBorder)) {
+        }
+        else if (collision(ball, bBorder)) {
             ball.changeDY(bBorder);
         }
+
         //ball with walls
         if (collision(ball, trBorder)) {
             ball.changeDX(trBorder);
@@ -322,10 +326,10 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             uiJoystick.draw(canvas);
             uiBoost.draw(canvas);
 
-            bs1.onDraw(canvas);
-            bs2.onDraw(canvas);
-            bs3.onDraw(canvas);
-            bs4.onDraw(canvas);
+            bs1.draw(canvas);
+            bs2.draw(canvas);
+            bs3.draw(canvas);
+            bs4.draw(canvas);
 
             drawText(canvas);
         }
@@ -339,22 +343,24 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     public void drawText(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setTextSize(30);
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(36);
         paint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-        canvas.drawText("Player Score: " + player.getScore(), 10, HEIGHT - 10, paint);
+        //canvas.drawText("Player Score: " + player.getScore(), 10, HEIGHT - 10, paint);
         canvas.drawText("Enemy Score: " + enemy.getScore(), WIDTH - 415, HEIGHT - 10, paint);
 
-        if (!player.getPlaying() && newGameCreated && reset) {
-            Paint paint1 = new Paint();
-            paint1.setTextSize(40);
-            paint1.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-            canvas.drawText("PRESS TO START", WIDTH / 2 - 50, HEIGHT / 2, paint1);
 
-            paint1.setTextSize(20);
-            canvas.drawText("USE THE LEFT CIRCLE FOR MOVEMENT", WIDTH / 2 - 50, HEIGHT / 2 + 20, paint1);
-            canvas.drawText("RIGHT CIRCLE FOR BOOST", WIDTH / 2 - 50, HEIGHT / 2 + 40, paint1);
-        }
+        Paint paint1 = new Paint();
+        paint1.setColor(Color.WHITE);
+        paint1.setTextSize(36);
+        paint1.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        canvas.drawText("Player Score: " + player.getScore(), 10, HEIGHT - 10, paint1);
+        //canvas.drawText("PRESS TO START", WIDTH / 2 - 50, HEIGHT / 2, paint1);
+
+        paint1.setTextSize(36);
+        //canvas.drawText("USE THE LEFT CIRCLE FOR MOVEMENT", WIDTH / 2 - 50, HEIGHT / 2 + 20, paint1);
+        //canvas.drawText("RIGHT CIRCLE FOR BOOST", WIDTH / 2 - 50, HEIGHT / 2 + 40, paint1);
+
     }
 
     public boolean collision(GameObject a, GameObject b) {
