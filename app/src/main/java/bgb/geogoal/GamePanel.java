@@ -123,7 +123,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             //TODO: add logic for pause
         }
         int boost = uiBoost.TouchEvent(event);
-        int boost = uiBoost.TouchEvent(event);
 
         player.update(uiJoystick.TouchEvent(event), boost);
 
