@@ -32,11 +32,6 @@ public class Ball extends GameObject {
     }
 
     public void update() {
-        animation.update();
-
-        //ball needs to move based on collision physics
-
-        //hitDetection()
 
         if (dx < 20 && dx > -20) {
             x += dx;
@@ -54,10 +49,6 @@ public class Ball extends GameObject {
         }
 
 
-    }
-
-    public void hitDetection(int sourceSpeed, int sourceX, int sourceY) {
-        //this method will receive the parameters from the player's x and y coordinate
     }
 
     public void draw(Canvas canvas) {
