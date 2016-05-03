@@ -38,6 +38,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     private Border tBorder;
     private Border bBorder;
 
+    private PauseButton pause;
+
     private boolean reset;
     private boolean newGameCreated;
     private boolean started;
@@ -93,6 +95,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
 
         ball = new Ball(BitmapFactory.decodeResource(getResources(), R.drawable.ball), 95, 95, 2);
+        pause =  new PauseButton(BitmapFactory.decodeResource(getResources(), R.drawable.pause),64,64,1);
 
         bg = new Background(BitmapFactory.decodeResource(getResources(), R.drawable.field));
         player = new Player(BitmapFactory.decodeResource(getResources(), R.drawable.player), 130, 80, 1, ContextForScreenSize);
@@ -115,6 +118,9 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (pause.TouchEvent(event)) {
+            //TODO: add logic for pause
+        }
         int boost = uiBoost.TouchEvent(event);
 
         player.update(uiJoystick.TouchEvent(event), boost);
@@ -304,6 +310,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
             trBorder.draw(canvas);
             blBorder.draw(canvas);
             brBorder.draw(canvas);
+
+            pause.draw(canvas);
 
 
             player.draw(canvas);

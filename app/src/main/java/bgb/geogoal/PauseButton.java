@@ -1,6 +1,7 @@
 package bgb.geogoal;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 
@@ -16,8 +17,8 @@ public class PauseButton extends GameObject{
 
     public PauseButton(Bitmap res, int w, int h, int numFrames) {
         buttonOn = false;
-        setX((GamePanel.WIDTH / 2) - (w / 2));
-        setY((GamePanel.HEIGHT / 2) - (h / 2));
+        setX((GamePanel.WIDTH * (5/7)) - (w / 2));
+        setY((GamePanel.HEIGHT *(1/8)) - (h / 2));
         //dx = -20;
         //dy = -10;
         height = h;
@@ -32,6 +33,10 @@ public class PauseButton extends GameObject{
 
         animation.setFrames(image);
         animation.setDelay(500);
+    }
+
+    public void draw(Canvas canvas) {
+        canvas.drawBitmap(animation.getImage(), x, y, null);
     }
 
     public boolean TouchEvent(final MotionEvent event) {
